@@ -1,0 +1,1 @@
+from .setting_config import WEATHER_API_KEY, REDIS_HOST, REDIS_PORT, REDIS_DB, CACHE_TTL_SECONDS

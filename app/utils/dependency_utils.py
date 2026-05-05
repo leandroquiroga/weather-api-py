@@ -1,12 +1,23 @@
-from services import WeatherService
+from services import WeatherService, CacheService
 from clients import WeatherClient
 from config import settings
+import redis.asyncio as redis
 
 def get_weather_service() -> WeatherService:
-    """ Dependency inyection for weather service """
+    """ Dependency injection for weather service """
     client = WeatherClient(
         base_url=settings.URL_BASE_WEATHER_API,
         path=settings.PATH_CITY_WEATHER,
         api_key=settings.WEATHER_API_KEY
     )
-    return WeatherService(client)
+    
+    redis_client = redis.Redis(
+        host=settings.REDIS_HOST,
+        port=settings.REDIS_PORT,
+        db=settings.REDIS_DB,
+        decode_responses=True
+    )
+    
+    cache = CacheService(redis_client)
+    return WeatherService(client, cache)
+  

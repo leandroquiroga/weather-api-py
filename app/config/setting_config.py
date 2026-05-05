@@ -2,7 +2,7 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    """Clase de configuracion"""
+    """Configuration environment variables"""
     URL_BASE_WEATHER_API: str = Field(validation_alias="ACCESS_URL_BASE_WEATHER_API")
     PATH_CITY_WEATHER: str = Field(validation_alias="ACCESS_PATH_CITY_WEATHER")
     WEATHER_API_KEY: str = Field(validation_alias="ACCESS_WEATHER_API_KEY")

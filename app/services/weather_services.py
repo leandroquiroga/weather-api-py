@@ -1,7 +1,11 @@
+from fastapi import HTTPException
 from clients import WeatherClient
 from models import WeatherData
-from services.cache_services import CacheService
 from config import settings
+from middlewares import get_logger
+from services.cache_services import CacheService
+
+logger = get_logger(__name__)
 
 class WeatherService: 
     """ Business logic for fetching weather data."""
@@ -27,15 +31,23 @@ class WeatherService:
         Returns:
             WeatherData: An instance of WeatherData containing the weather information.
         """
-
-        cache_key = f"weather:current:{city.lower()}"
-        cached = await self.cache.get_cache(cache_key)
-        
-        if cached: 
-            return WeatherData(**cached)
+        try:
+          cache_key = f"weather:current:{city.lower()}"
+          cached = await self.cache.get_cache(cache_key)
           
-        raw_data = await self.client.get_current_weather(city)
-        await self.cache.set_cache( cache_key, raw_data, expires=settings.CACHE_TTL_SECONDS )
-        return WeatherData(**raw_data)
+          if cached: 
+              logger.info(f"Cache hit for city: {city}")
+              return WeatherData(**cached)
+            
+          logger.info(f"Cache miss for city: {city}. Fetching from API.")
+          raw_data = await self.client.get_current_weather(city)
+          await self.cache.set_cache( cache_key, raw_data, expires=settings.CACHE_TTL_SECONDS )
+          logger.info(f"Weather data for city: {city} cached successfully.")
+          return WeatherData(**raw_data)
+        except Exception as e:
+            # Sanitized error message for logging
+            error_msg = str(e)
+            logger.error(f"Error fetching weather data for city: {city} - {error_msg}")
+            raise HTTPException(status_code=500, detail="Error fetching weather data")
       
       

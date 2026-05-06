@@ -1,5 +1,9 @@
 import httpx
 from typing import Dict, Any
+from utils.security_utils import mask_sensitive_data, sanitize_error_message
+from middlewares.logging_middleware import get_logger
+
+logger = get_logger(__name__)
 
 class WeatherClient:
     """ 
@@ -22,6 +26,10 @@ class WeatherClient:
 
         Returns:
             Dictionary with the weather information from the OpenWeatherMap API
+            
+        Raises:
+            httpx.HTTPStatusError: When API returns error status (sanitized)
+            httpx.TimeoutException: When request times out
         """
         
         url = f"{self.base_url}{self.path}"
@@ -32,7 +40,30 @@ class WeatherClient:
             "units": "metric"  # Temperature in Celsius
         }
         
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(url, params=params)
-            response.raise_for_status()
-            return response.json()
+        # Logging with masked API key
+        masked_params = mask_sensitive_data(params, sensitive_keys=["appid"])
+        logger.info(f"Fetching weather data for city: {city} with params: {masked_params}")
+
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(url, params=params)
+                response.raise_for_status()
+                return response.json()
+        except httpx.HTTPStatusError as e:
+            # Sanitized error message for logging
+            sanitized_msg = sanitize_error_message(str(e), self.api_key)
+            logger.error(f"HTTP error fetching weather for {city}: {sanitized_msg}")
+            # Re-raise the error with sanitized message 
+            raise httpx.HTTPStatusError(
+                sanitized_msg,
+                request=e.request,
+                response=e.response
+            )
+        except httpx.TimeoutException as e:
+            logger.error(f"Timeout fetching weather for {city}")
+            raise
+        except Exception as e:
+            # Sanitized any unexpected error 
+            sanitized_msg = sanitize_error_message(str(e), self.api_key)
+            logger.error(f"Unexpected error fetching weather for {city}: {sanitized_msg}")
+            raise Exception(sanitized_msg)

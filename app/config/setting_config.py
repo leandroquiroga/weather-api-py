@@ -12,6 +12,11 @@ class Settings(BaseSettings):
     REDIS_DB: int = Field(validation_alias="ACCESS_REDIS_DB")
     CACHE_TTL_SECONDS: int = Field(validation_alias="ACCESS_CACHE_TTL_SECONDS")
     
+    RATE_LIMIT: str = Field(
+      default="10/minute",
+      validation_alias="ACCESS_RATE_LIMIT",
+      description="Rate limit format: {count}/{period}"
+    )
     model_config = SettingsConfigDict(
         env_file = ".env",
         env_file_encoding = "utf-8"

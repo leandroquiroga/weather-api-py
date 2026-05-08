@@ -1,6 +1,9 @@
 import json
 from typing import Dict, Any
+from utils.errors.custom_exceptions import CacheException
+from middlewares.logging_middleware import get_logger
 
+logger = get_logger(__name__)
 class CacheService: 
     """Service for managing Redis cache operations."""
     
@@ -23,10 +26,14 @@ class CacheService:
         Returns:
             Cached data as dictionary or None if not found
         """
-        data = await self.redis_client.get(key)
-        if data:
-            return json.loads(data)
-        return None
+        try: 
+          data = await self.redis_client.get(key)
+          if data:
+              return json.loads(data)
+          return None
+        except Exception as e:
+            logger.error(f"Error retrieving cache for key: {key} - {str(e)}")
+            raise CacheException(operation="get", key=key, original_error=str(e))
       
     async def set_cache(self, key: str, value: Dict[str, Any], expires: int) -> None:
         """
@@ -37,7 +44,11 @@ class CacheService:
             value: Data to cache (will be JSON serialized)
             expires: TTL in seconds
         """
-        await self.redis_client.set(key, json.dumps(value), ex=expires)
+        try:
+            await self.redis_client.set(key, json.dumps(value), ex=expires)
+        except Exception as e:
+            logger.error(f"Error setting cache for key: {key} - {str(e)}")
+            raise CacheException(operation="set", key=key, original_error=str(e))
         
     async def delete_cache(self, key: str) -> None:
         """
@@ -46,4 +57,8 @@ class CacheService:
         Args:
             key: Cache key to delete
         """
-        await self.redis_client.delete(key)
+        try:
+          await self.redis_client.delete(key)
+        except Exception as e:
+            logger.error(f"Error deleting cache for key: {key} - {str(e)}")
+            raise CacheException(operation="delete", key=key, original_error=str(e))

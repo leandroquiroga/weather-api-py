@@ -2,6 +2,7 @@ import httpx
 from typing import Dict, Any
 from utils.security_utils import mask_sensitive_data, sanitize_error_message
 from middlewares.logging_middleware import get_logger
+from utils.errors.custom_exceptions import CityNotFoundError, ExternalAPIException
 
 logger = get_logger(__name__)
 
@@ -50,20 +51,16 @@ class WeatherClient:
                 response.raise_for_status()
                 return response.json()
         except httpx.HTTPStatusError as e:
-            # Sanitized error message for logging
             sanitized_msg = sanitize_error_message(str(e), self.api_key)
             logger.error(f"HTTP error fetching weather for {city}: {sanitized_msg}")
-            # Re-raise the error with sanitized message 
-            raise httpx.HTTPStatusError(
-                sanitized_msg,
-                request=e.request,
-                response=e.response
-            )
+            
+            if e.response.status_code == 404:
+                raise CityNotFoundError(city)
+            elif e.response.status_code in [500, 502, 503, 504]:
+                raise ExternalAPIException("Weather service is temporarily unavailable")
+            else:
+                raise ExternalAPIException(f"Unexpected API error: {e.response.status_code}")
+
         except httpx.TimeoutException as e:
             logger.error(f"Timeout fetching weather for {city}")
-            raise
-        except Exception as e:
-            # Sanitized any unexpected error 
-            sanitized_msg = sanitize_error_message(str(e), self.api_key)
-            logger.error(f"Unexpected error fetching weather for {city}: {sanitized_msg}")
-            raise Exception(sanitized_msg)
+            raise ExternalAPIException("Weather service timeout")

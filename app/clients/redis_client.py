@@ -1,7 +1,6 @@
 import redis.asyncio as redis
-from config import settings
+from app.config import settings
 
-# Singleton Redis client instance
 _redis_client = None
 
 

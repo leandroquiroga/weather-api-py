@@ -22,6 +22,7 @@ class CacheException(Exception):
         
 class InvalidCityNameError(Exception):
     """ Custom exception for invalid city name """
-    def __init__(self, city: str):
+    def __init__(self, city: str, reason: str = "City names should only contain letters."):
         self.city = city
-        super().__init__(f"Invalid city name: '{city}'. City names should only contain letters.")
+        self.reason = reason
+        super().__init__(f"Invalid city name: '{city}'. {reason}")

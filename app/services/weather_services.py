@@ -1,11 +1,11 @@
 import httpx
 from fastapi import HTTPException
-from clients import WeatherClient
-from models import WeatherData
-from config import settings
-from middlewares import get_logger
-from services.cache_services import CacheService
-from utils.errors.custom_exceptions import CacheException
+from app.clients import WeatherClient
+from app.models import WeatherData
+from app.config import settings
+from app.middlewares import get_logger
+from app.services.cache_services import CacheService
+from app.utils.errors.custom_exceptions import CacheException
 
 logger = get_logger(__name__)
 

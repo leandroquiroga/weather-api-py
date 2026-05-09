@@ -1,6 +1,6 @@
-from services import WeatherService, CacheService
-from clients import WeatherClient
-from config import settings
+from app.services import WeatherService, CacheService
+from app.clients import WeatherClient
+from app.config import settings
 import redis.asyncio as redis
 
 def get_weather_service() -> WeatherService:

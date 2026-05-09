@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException ,status, Request
-from config import settings
-from utils import get_weather_service
-from models.weather_models import WeatherData
-from middlewares.rate_limit_middleware import limiter
-from utils.errors.custom_exceptions import InvalidCityNameError
+from app.config import settings
+from app.utils import get_weather_service
+from app.models.weather_models import WeatherData
+from app.middlewares.rate_limit_middleware import limiter
+from app.utils.errors.custom_exceptions import InvalidCityNameError
 
 weather_router = APIRouter(prefix="/v1/weather", tags=["weather"])
 

@@ -1,5 +1,5 @@
 from fastapi.responses import JSONResponse
-from middlewares.logging_middleware import get_logger
+from app.middlewares.logging_middleware import get_logger
 
 logger = get_logger(__name__)
 

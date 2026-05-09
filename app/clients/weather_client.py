@@ -1,8 +1,8 @@
 import httpx
 from typing import Dict, Any
-from utils.security_utils import mask_sensitive_data, sanitize_error_message
-from middlewares.logging_middleware import get_logger
-from utils.errors.custom_exceptions import CityNotFoundError, ExternalAPIException
+from app.utils.security_utils import mask_sensitive_data, sanitize_error_message
+from app.middlewares.logging_middleware import get_logger
+from app.utils.errors.custom_exceptions import CityNotFoundError, ExternalAPIException
 
 logger = get_logger(__name__)
 

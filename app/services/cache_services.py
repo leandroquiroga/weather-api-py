@@ -1,7 +1,7 @@
 import json
 from typing import Dict, Any
-from utils.errors.custom_exceptions import CacheException
-from middlewares.logging_middleware import get_logger
+from app.utils.errors.custom_exceptions import CacheException
+from app.middlewares.logging_middleware import get_logger
 
 logger = get_logger(__name__)
 class CacheService: 

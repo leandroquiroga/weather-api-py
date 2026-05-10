@@ -1,5 +1,3 @@
-import httpx
-from fastapi import HTTPException
 from app.clients import WeatherClient
 from app.models import WeatherData
 from app.config import settings

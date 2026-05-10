@@ -1,5 +1,6 @@
 import httpx
 from typing import Dict, Any
+from app.config.setting_config import settings
 from app.utils.security_utils import mask_sensitive_data, sanitize_error_message
 from app.middlewares.logging_middleware import get_logger
 from app.utils.errors.custom_exceptions import CityNotFoundError, ExternalAPIException
@@ -37,8 +38,8 @@ class WeatherClient:
         params = {
             "q": city,
             "appid": self.api_key,
-            "lang": "es",
-            "units": "metric"  # Temperature in Celsius
+            "lang": settings.WEATHER_LANG,
+            "units": settings.WEATHER_UNITS
         }
         
         # Logging with masked API key

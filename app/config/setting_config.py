@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     REDIS_PORT: int = Field(validation_alias="ACCESS_REDIS_PORT")
     REDIS_DB: int = Field(validation_alias="ACCESS_REDIS_DB")
     CACHE_TTL_SECONDS: int = Field(validation_alias="ACCESS_CACHE_TTL_SECONDS")
+    WEATHER_LANG: str = Field(validation_alias="ACCESS_WEATHER_LANG")
+    WEATHER_UNITS: str = Field(validation_alias="ACCESS_WEATHER_UNITS")
     
     RATE_LIMIT: str = Field(
       default="10/minute",

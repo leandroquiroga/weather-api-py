@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException ,status, Request
+from fastapi import APIRouter,Depends ,status, Request
 from app.config import settings
 from app.utils import get_weather_service
 from app.models.weather_models import WeatherData
@@ -12,12 +12,12 @@ weather_router = APIRouter(prefix="/v1/weather", tags=["weather"])
 async def get_weather(request: Request, city: str, service = Depends(get_weather_service)):
     """ Endpoint to get weather data for a specific city. """
     if not city or city.strip() == "":
-        raise InvalidCityNameError("Empty city name")
+        raise InvalidCityNameError(city, "City name cannot be empty.")
     
     if len(city) > 50:
-        raise InvalidCityNameError(f"City name too long: {city}")
+        raise InvalidCityNameError(city, "City name is too long.")
     
     if not city.replace(" ", "").replace("-", "").isalpha():
-        raise InvalidCityNameError(f"City name contains invalid characters: {city}")
+        raise InvalidCityNameError(city, "City names contains invalid characters.")
     
     return await service.get_weather_data(city)

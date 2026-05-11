@@ -39,7 +39,7 @@ def mask_api_key(api_key: str) -> str:
             Masked API key string
     """
     
-    if not len(api_key) <= 8:
+    if not len(api_key) > 8:
         return '****'
 
     return f"{api_key[:4]}...{api_key[-4:]}"

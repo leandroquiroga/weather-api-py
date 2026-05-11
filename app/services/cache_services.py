@@ -4,7 +4,7 @@ from app.utils.errors.custom_exceptions import CacheException
 from app.middlewares.logging_middleware import get_logger
 
 logger = get_logger(__name__)
-class CacheService: 
+class CacheService:
     """Service for managing Redis cache operations."""
     
     def __init__(self, redis_client):

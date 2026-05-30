@@ -331,4 +331,4 @@ La API implementa un sistema robusto de manejo de errores con códigos HTTP apro
 
 **Leandro Quiroga**
 
-Proyecto desarrollado con Python, FastAPI y arquitecturas backend escalables.
+Este proyecto cuenta con la solución creada para [Roadmap.sh](https://roadmap.sh/projects/weather-api-wrapper-service) con fines educativos
